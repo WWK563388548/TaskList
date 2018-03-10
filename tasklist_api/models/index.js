@@ -4,4 +4,4 @@ mongoose.connect("mongodb://localhost/todo-api");
 
 mongoose.Promise = Promise;
 
-module.exports.task = require("./task");
+module.exports.Task = require("./task");

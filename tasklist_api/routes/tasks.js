@@ -2,23 +2,21 @@ var express = require("express");
 var router = express.Router();
 var db = require("../models");
 
+// The get route
 router.get("/", function(req, res){
-    db.task.find()
-    .then(function(tasks){
+    db.Task.find().then(function(tasks){
         res.json(tasks);
-    })
-    .catch(function(err){
+    }).catch(function(err){
         res.send(err);
     });
 });
 
+// The post route
 router.post("/", function(req, res){
-    db.task.create(req.body)
-    .then(function(newTask){
+    db.Task.create(req.body).then(function(newTask){
         // The status 201 means that new data has been created
         res.status(201).json(newTask);
-    })
-    .catc(function(err){
+    }).catch(function(err){
         res.send(err);
     });
 });
