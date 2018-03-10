@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 
 // String name
 // Boolean completed
-// String created_date
+// Date created_date
 var taskSchema = new mongoose.Schema({
     name: {
         type: String,

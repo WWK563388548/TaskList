@@ -21,4 +21,13 @@ router.post("/", function(req, res){
     });
 });
 
+router.get("/:todoId", function(req, res){
+   db.Task.findById(req.params.todoId)
+   .then(function(foundTask){
+       res.json(foundTask);
+   }).catch(function(err){
+       res.send(err);
+   });
+});
+
 module.exports = router;
