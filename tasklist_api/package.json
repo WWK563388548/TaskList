@@ -1,0 +1,16 @@
+{
+  "name": "tasklist_api",
+  "version": "1.0.0",
+  "description": "An api of a single page application ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wwk",
+  "license": "ISC",
+  "dependencies": {
+    "cat-me": "^1.0.3",
+    "express": "^4.16.2",
+    "mongoose": "^5.0.9"
+  }
+}
