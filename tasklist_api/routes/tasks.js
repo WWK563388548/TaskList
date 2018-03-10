@@ -42,4 +42,14 @@ router.put("/:taskId", function(req, res){
     });
 });
 
+// delete route
+router.delete("/:taskId", function(req, res){
+    db.Task.remove({_id: req.params.taskId})
+    .then(function(){
+        res.json({message: "删除任务!"});
+    }).catch(function(err){
+        res.send(err);
+    });
+});
+
 module.exports = router;
