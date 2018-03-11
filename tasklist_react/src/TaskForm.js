@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 class TaskForm extends Component {
     constructor(props){
         super(props);
-        this.state = {inputValue: '请输入一项工作'};    
+        this.state = {inputValue: ''};    
         this.handlChange = this.handlChange.bind(this);  
         this.handleSubmit = this.handleSubmit.bind(this);  
     }

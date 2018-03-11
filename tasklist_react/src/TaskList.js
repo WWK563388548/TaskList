@@ -66,11 +66,38 @@ class TaskList extends Component {
       });
     }
 
+    // Delete Task
+    deleteTask(id){
+        const DELETEURL = APIURL + '/' + id;
+        fetch(DELETEURL, {
+            method: 'delete',
+        })
+        .then(response => {
+            if(!response.ok) {
+                if(response.status >= 400 && response.status < 500){
+                    return response.json().then(data => {
+                        let err = {errorMessage: data.message};
+                        throw err;
+                    })
+                } else {
+                    let err = {errorMessage: "Please try again later. Server is not responding..."};
+                    throw err;
+                }
+            }
+            return response.json();
+      }).then(() => {
+          const tasks = this.state.tasks.filter(task => task._id !== id);
+          // Display new Task in page
+          this.setState({tasks: tasks});
+      });
+    }
+
     render(){
        const tasks = this.state.tasks.map((t) => (
            <TaskItem
                 key={t._id}
                 {...t}
+                onDelete = {this.deleteTask.bind(this, t._id)}
            />
        ));
         return (
