@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import TaskItem from './TaskItem';
+import TaskForm from './TaskForm';
 const APIURL = '/api/tasks';
 
 class TaskList extends Component {
@@ -9,12 +10,14 @@ class TaskList extends Component {
         this.state = {
           tasks: []
         }
+        this.addTask = this.addTask.bind(this);
       }
     
       componentWillMount() {
         this.loadTasks();
       }
     
+      // Load all tasks and displaying them
       // Can reuse this for request other things
       loadTasks(){
         fetch(APIURL)
@@ -35,6 +38,34 @@ class TaskList extends Component {
       }).then(tasks => this.setState({tasks}));
     }
 
+    // Add new tasks and display them
+    addTask(val){
+        fetch(APIURL, {
+            method: 'post',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+            }),
+            body: JSON.stringify({name: val})
+        })
+        .then(response => {
+            if(!response.ok) {
+                if(response.status >= 400 && response.status < 500){
+                    return response.json().then(data => {
+                        let err = {errorMessage: data.message};
+                        throw err;
+                    })
+                } else {
+                    let err = {errorMessage: "Please try again later. Server is not responding..."};
+                    throw err;
+                }
+            }
+            return response.json();
+      }).then(newTask => {
+          // Display new Task in page
+          this.setState({tasks: [...this.state.tasks, newTask]})
+      });
+    }
+
     render(){
        const tasks = this.state.tasks.map((t) => (
            <TaskItem
@@ -45,6 +76,7 @@ class TaskList extends Component {
         return (
             <div>
                 <h1>工作任务</h1>
+                <TaskForm addTask={this.addTask}/>
                 <ul>
                     {tasks}
                 </ul>
