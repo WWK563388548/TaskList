@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import TaskItem from './TaskItem';
 const APIURL = '/api/tasks';
 
 class TaskList extends Component {
@@ -35,8 +36,19 @@ class TaskList extends Component {
     }
 
     render(){
+       const tasks = this.state.tasks.map((t) => (
+           <TaskItem
+                key={t._id}
+                {...t}
+           />
+       ));
         return (
-            <h1>工作任务</h1>
+            <div>
+                <h1>工作任务</h1>
+                <ul>
+                    {tasks}
+                </ul>
+            </div>
         )
     }
 }
