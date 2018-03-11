@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
+import * as apiCalls from './Api';
 const APIURL = '/api/tasks';
 
 class TaskList extends Component {
@@ -11,116 +12,41 @@ class TaskList extends Component {
           tasks: []
         }
         this.addTask = this.addTask.bind(this);
-      }
+    }
     
-      componentWillMount() {
+    componentWillMount() {
         this.loadTasks();
-      }
+    }
     
-      // Load all tasks and displaying them
-      // Can reuse this for request other things
-      loadTasks(){
-        fetch(APIURL)
-        .then(response => {
-            if(!response.ok) {
-                if(response.status >= 400 && response.status < 500){
-                    return response.json().then(data => {
-                        let err = {errorMessage: data.message};
-                        throw err;
-                    })
-                } else {
-                    let err = {errorMessage: "Please try again later. Server is not responding..."};
-                    throw err;
-                }
-            }
-            return response.json();
-    
-      }).then(tasks => this.setState({tasks}));
+    // Load all tasks and displaying them
+    // Can reuse this for request other things
+    async loadTasks(){
+        let tasks = await apiCalls.getTasks();
+        this.setState({tasks});
     }
 
     // Add new tasks and display them
-    addTask(val){
-        fetch(APIURL, {
-            method: 'post',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-            }),
-            body: JSON.stringify({name: val})
-        })
-        .then(response => {
-            if(!response.ok) {
-                if(response.status >= 400 && response.status < 500){
-                    return response.json().then(data => {
-                        let err = {errorMessage: data.message};
-                        throw err;
-                    })
-                } else {
-                    let err = {errorMessage: "Please try again later. Server is not responding..."};
-                    throw err;
-                }
-            }
-            return response.json();
-      }).then(newTask => {
-          // Display new Task in page
-          this.setState({tasks: [...this.state.tasks, newTask]})
-      });
+    async addTask(val){
+        let newTask = await apiCalls.createTask(val);
+        // Display new Task in page
+        this.setState({tasks: [...this.state.tasks, newTask]});
     }
 
     // Delete Task
-    deleteTask(id){
-        const DELETEURL = APIURL + '/' + id;
-        fetch(DELETEURL, {
-            method: 'delete',
-        })
-        .then(response => {
-            if(!response.ok) {
-                if(response.status >= 400 && response.status < 500){
-                    return response.json().then(data => {
-                        let err = {errorMessage: data.message};
-                        throw err;
-                    })
-                } else {
-                    let err = {errorMessage: "Please try again later. Server is not responding..."};
-                    throw err;
-                }
-            }
-            return response.json();
-      }).then(() => {
-          const tasks = this.state.tasks.filter(task => task._id !== id);
-          // Display new Task in page
-          this.setState({tasks: tasks});
-      });
+    async deleteTask(id){
+        await apiCalls.removeTask(id); 
+        const tasks = this.state.tasks.filter(task => task._id !== id);
+        // Display new Task in page
+        this.setState({tasks: tasks});
     }
 
-    toggleTask(task){
-        const UPDATEURL = APIURL + '/' + task._id;
-        fetch(UPDATEURL, {
-            method: 'put',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-            }),
-            body: JSON.stringify({completed: !task.completed})
-        })
-        .then(response => {
-            if(!response.ok) {
-                if(response.status >= 400 && response.status < 500){
-                    return response.json().then(data => {
-                        let err = {errorMessage: data.message};
-                        throw err;
-                    })
-                } else {
-                    let err = {errorMessage: "Please try again later. Server is not responding..."};
-                    throw err;
-                }
-            }
-            return response.json();
-      }).then(updatedTask => {
-          const tasks = this.state.tasks.map(t => 
+    async toggleTask(task){
+        let updatedTask = await apiCalls.updateTask(task);
+        const tasks = this.state.tasks.map(t => 
             (t._id === updatedTask._id) ? {...t, completed: !t.completed} : t
         )
-          // Display new Task in page
-          this.setState({tasks: tasks});
-      });
+        // Display new Task in page
+        this.setState({tasks: tasks});
     }
 
     render(){
