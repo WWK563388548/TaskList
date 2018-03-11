@@ -28,7 +28,7 @@ exports.getTask = function(req, res){
 
  exports.updateTask = function(req, res){
     // The "new: true" returns new updated value
-    db.Task.findOneAndUpdat({_id: req.params.taskId}, req.body, {new: true})
+    db.Task.findOneAndUpdate({_id: req.params.taskId}, req.body, {new: true})
     .then(function(task){
         res.json(task);
     }).catch(function(err){

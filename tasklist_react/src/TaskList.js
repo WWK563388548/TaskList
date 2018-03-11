@@ -92,12 +92,44 @@ class TaskList extends Component {
       });
     }
 
+    toggleTask(task){
+        const UPDATEURL = APIURL + '/' + task._id;
+        fetch(UPDATEURL, {
+            method: 'put',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+            }),
+            body: JSON.stringify({completed: !task.completed})
+        })
+        .then(response => {
+            if(!response.ok) {
+                if(response.status >= 400 && response.status < 500){
+                    return response.json().then(data => {
+                        let err = {errorMessage: data.message};
+                        throw err;
+                    })
+                } else {
+                    let err = {errorMessage: "Please try again later. Server is not responding..."};
+                    throw err;
+                }
+            }
+            return response.json();
+      }).then(updatedTask => {
+          const tasks = this.state.tasks.map(t => 
+            (t._id === updatedTask._id) ? {...t, completed: !t.completed} : t
+        )
+          // Display new Task in page
+          this.setState({tasks: tasks});
+      });
+    }
+
     render(){
        const tasks = this.state.tasks.map((t) => (
            <TaskItem
                 key={t._id}
                 {...t}
                 onDelete = {this.deleteTask.bind(this, t._id)}
+                onToggle = {this.toggleTask.bind(this, t)}
            />
        ));
         return (
